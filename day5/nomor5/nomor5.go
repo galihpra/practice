@@ -2,8 +2,8 @@ package main
 
 import "fmt"
 
-func pangkat(base, pangkat int) (a int) {
-	a = 1
+func pangkat(base, pangkat int) int {
+	var a int = 1
 	for i := 1; i <= pangkat; i++ {
 		a = a * base
 	}
