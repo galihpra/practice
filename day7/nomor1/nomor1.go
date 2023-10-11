@@ -10,24 +10,15 @@ func Compare(a, b string) string {
 
 	var peta = make(map[string]bool)
 
-	var split1 = strings.Split(a, " ")
-	var split2 = strings.Split(b, " ")
-	if len(split1) == 0 || len(split2) == 0 {
-		fmt.Println("Kata ada yang kosong")
+	var split1 = strings.Split(a, "")
+	var split2 = strings.Split(b, "")
+	for _, kata := range split1 {
+		peta[kata] = true
 	}
-	for i := 0; i < len(split1); i++ {
-		if _, ketemu := peta[split1[i]]; !ketemu {
-			peta[split1[i]] = false
-		}
-	}
-	for i := 0; i < len(split2); i++ {
-		if _, ketemu := peta[split2[i]]; !ketemu {
-			peta[split2[i]] = true
-		}
-	}
-	for j, k := range peta {
-		if k {
-			fmt.Print(j)
+
+	for _, kata := range split2 {
+		if _, ok := peta[kata]; ok {
+			fmt.Print(kata)
 		}
 	}
 	return x
