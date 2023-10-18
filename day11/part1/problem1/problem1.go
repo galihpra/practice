@@ -5,11 +5,18 @@ import (
 )
 
 func SimpleEquations(a, b, c int) interface{} {
-	if a+b == c {
-		return "no solution"
-	} else {
-		return []int{1, 2, 3}
+	// var result string = "no solution"
+	for x := 0; x < a; x++ {
+		for y := 0; y < a; y++ {
+			for z := 0; z < a; z++ {
+				if x+y+z == a && x*y*z == b {
+					// result = fmt.Sprint([]int{x, y, z})
+					return []int{x, y, z}
+				}
+			}
+		}
 	}
+	return fmt.Sprintf("no solution")
 
 }
 

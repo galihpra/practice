@@ -28,8 +28,37 @@ func MostappearItem(items []string) string {
 	return a
 
 }
+func SeringMuncul(item []string) string {
+	var result = ""
+	var map1 = make(map[string]int)
+	for i := 0; i < len(item); i++ {
+		if _, found := map1[item[i]]; found {
+			map1[item[i]]++
+		} else {
+			map1[item[i]] = 1
+		}
+	}
+
+	var sce = make([]int, len(map1))
+	for _, value := range map1 {
+		sce = append(sce, value)
+	}
+
+	sort.Ints(sce)
+
+	for j := 0; j < len(sce); j++ {
+		for index, value := range map1 {
+			if value == sce[j] {
+				result += fmt.Sprintln(index, "->", value)
+				break
+			}
+		}
+	}
+	return result
+
+}
 func main() {
-	fmt.Println(MostappearItem([]string{"js", "js", "golang", "ruby", "ruby", "js", "js"}))
-	fmt.Println(MostappearItem([]string{"A", "B", "B", "C", "A", "A", "B", "A", "D", "D"}))
-	fmt.Println(MostappearItem([]string{"football", "basketball", "tenis"}))
+	fmt.Println(SeringMuncul([]string{"js", "js", "golang", "ruby", "ruby", "js", "js"}))
+	fmt.Println(SeringMuncul([]string{"A", "B", "B", "C", "A", "A", "B", "A", "D", "D"}))
+	fmt.Println(SeringMuncul([]string{"football", "basketball", "tenis"}))
 }
