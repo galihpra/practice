@@ -1,0 +1,301 @@
+openapi: 3.0.0
+info:
+  title: Tokoku API
+  description: Ini adalah API spec untuk Aplikasi Tokoku
+  version: 1.0.0
+  contact:
+    email: "galihp83@gmail.com"
+servers:
+  - url: "localhost:8000"
+    description: "local"
+  - url: "http://tokoku.com/v1"
+    description: "UAT"
+  - url: "http://tokoku.com/{version}"
+    variables:
+      version:
+        default: "v1"
+        enum:
+          - v1
+          - v2
+    description: "UAT"
+paths:
+  /users:
+    get:
+      operationId: "GetUsersController"
+      tags:
+        - Users
+      summary: "Menampilkan data semua user"
+      description: "Menampilkan data user baik admin maupun pegawai pada sistem"
+      responses:
+        '200': 
+          description: "response sukses"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        name:
+                          type: string
+                        email:
+                          type: string
+                        password:
+                          type: string
+              example:
+                message: "success get all users"
+                data: 
+                  - id: 1
+                    name: "Galih"
+                    email: "galihp83@gmail.com"
+                    password: "galih123"
+        '401':
+          $ref: '#/components/responses/401'
+        '500':
+          $ref: '#/components/responses/500'
+    post:
+      operationId: "CreateUserController"
+      tags:
+        - Users
+      summary: "Menambahkan data user"
+      description: "Menambahkan data user baru ke dalam sistem sesuai dengan input yang telah ditentukan"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/userObject'
+            example:
+              id: 1
+              name: Galih
+              email: "galihp83@gmail.com"
+              password: "galih123"
+      responses:
+        '201':
+          description: "response sukses"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/responseObject'
+              example:
+                message: "success"
+                data:
+                  id: 1
+                  name: "Galih"
+                  email: "galihp83@gmail.com"
+                  password: "galih123"
+        '400':
+          $ref: '#/components/responses/400'
+        '500':
+          $ref: '#/components/responses/500'
+  /users/{id}:
+    put:
+      operationId: "UpdateUserController"
+      tags:
+        - Users
+      summary: "Mengupdate data user"
+      description: "Mengupdate data user pada sistem berdasarkan ID yang dipilih"
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+            format: int
+            minimum: 1
+      responses:
+        '200': 
+          description: "response sukses"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        name:
+                          type: string
+                        email:
+                          type: string
+                        password:
+                          type: string
+              example:
+                message: "Success update user"
+                data: 
+                  - id: 1
+                    name: "Galih"
+                    email: "galihp83@gmail.com"
+                    password: "galih123"
+        '401':
+          $ref: '#/components/responses/401'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+    delete:
+      operationId: "DeleteUserController"
+      tags:
+        - Users
+      summary: "Menghapus data user"
+      description: "Menghapus data user pada sistem berdasarkan ID yang dipilih"
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+            format: int
+            minimum: 1
+      responses:
+        '204': 
+          description: "respons sukses"
+          content:
+            application/json:
+              example:
+                message: "Success delete user"                
+        '401':
+          $ref: '#/components/responses/401'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+    get:
+      operationId: "GetUserController"
+      tags:
+        - Users
+      summary: "Melihat data user"
+      description: "Melihat data user pada sistem berdasarkan ID yang dipilih"
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+            format: int
+            minimum: 1
+      responses:
+        '200': 
+          description: "response sukses"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        name:
+                          type: string
+                        email:
+                          type: string
+                        password:
+                          type: string
+              example:
+                message: "Success get user"
+                data: 
+                  - id: 1
+                    name: "Galih"
+                    email: "galihp83@gmail.com"
+                    password: "galih123"
+        '401':
+          $ref: '#/components/responses/401'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+      
+components:
+  schemas:
+    userObject:
+      type: object
+      properties:
+        message:
+          type: string
+        data:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+              name:
+                type: string
+              email:
+                type: string
+              password:
+                type: string
+    responseObject:
+      type: object
+      properties:
+        message:
+          type: string
+        data:
+          type: object
+          nullable: true
+  responses:
+    '400': 
+      description: "Invalid user input"
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/responseObject'
+          examples:
+            "no name":
+              value:
+                "message": "name field required"
+                "data": null
+            "invalid email":
+              value:
+                "message": "invalid email format"
+                "data": null
+            "no password":
+              value:
+                "message": "password field required"
+                "data": null
+    '401':
+      description: "Unauthorized"
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/responseObject'
+          example:
+            message: "fail"
+            data: null
+    '404':
+      description: "Not found"
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/responseObject'
+          example:
+            message: "data not found"
+            data: null
+    '500':
+      description: "Internal server error"
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/responseObject'
+          example:
+            message: "fail"
+            data: null
