@@ -39,7 +39,10 @@ func (ps *ProductSystem) CreateProduct(c echo.Context) error {
 func (ps *ProductSystem) ReadProduct(c echo.Context) error {
 	var ProductList []model.Product
 
-	qry := ps.DB.Find(&ProductList)
+	qry := ps.DB.Model(&model.Product{}).
+		Select("products.*, users.nama as nama").
+		Joins("JOIN users on products.user_id = users.username").
+		Scan(&ProductList)
 	err := qry.Error
 
 	if err != nil {
@@ -135,7 +138,11 @@ func (ps *ProductSystem) ReadProductById(c echo.Context) error {
 
 	var product model.Product
 
-	qry := ps.DB.Where("barcode = ?", ProductID).First(&product)
+	qry := ps.DB.Model(&model.Product{}).
+		Where("barcode = ?", ProductID).
+		Select("products.*, users.nama as nama").
+		Joins("JOIN users on products.user_id = users.username").
+		First(&product)
 	if qry.Error != nil {
 		if errors.Is(qry.Error, gorm.ErrRecordNotFound) {
 			return c.JSON(http.StatusNotFound, map[string]interface{}{
