@@ -3,6 +3,7 @@ package main
 import (
 	"day-22/auth"
 	"day-22/config"
+	"day-22/customer"
 	"day-22/model"
 	"fmt"
 
@@ -18,8 +19,10 @@ func main() {
 	}
 
 	db.AutoMigrate(&model.User{})
+	db.AutoMigrate(&model.Customer{})
 
 	var auth = auth.AuthSystem{DB: db}
+	var cust = customer.CustomerSystem{DB: db}
 
 	e := echo.New()
 
@@ -27,9 +30,11 @@ func main() {
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
 
-	// Routes
+	// Login
 	e.POST("/login", auth.LoginHandler)
 
-	// Start server
+	// Customer
+	e.POST("/customers", cust.CreateCustomer)
+
 	e.Logger.Fatal(e.Start(":8000"))
 }
