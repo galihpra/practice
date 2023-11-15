@@ -5,6 +5,7 @@ import (
 	"day-22/config"
 	"day-22/customer"
 	"day-22/model"
+	"day-22/users"
 	"fmt"
 
 	"github.com/labstack/echo/v4"
@@ -20,9 +21,11 @@ func main() {
 
 	db.AutoMigrate(&model.User{})
 	db.AutoMigrate(&model.Customer{})
+	db.AutoMigrate(&model.User{})
 
 	var auth = auth.AuthSystem{DB: db}
 	var cust = customer.CustomerSystem{DB: db}
+	var user = users.UserSystem{DB: db}
 
 	e := echo.New()
 
@@ -38,6 +41,13 @@ func main() {
 	e.GET("/customers", cust.ReadCustomer)
 	e.DELETE("/customers/:hp", cust.DeleteCustomer)
 	e.PUT("/customers/:hp", cust.UpdateCustomer)
+
+	// User
+	e.POST("/users", user.CreateUser)
+	e.GET("/users", user.ReadUser)
+	e.GET("/users/:username", user.ReadUserById)
+	e.DELETE("/users/:username", user.DeleteUser)
+	e.PUT("/users/:username", user.UpdateUser)
 
 	e.Logger.Fatal(e.Start(":8000"))
 }
