@@ -35,6 +35,8 @@ func main() {
 
 	// Customer
 	e.POST("/customers", cust.CreateCustomer)
+	e.GET("/customers", cust.ReadCustomer)
+	e.DELETE("/customers/:hp", cust.DeleteCustomer)
 
 	e.Logger.Fatal(e.Start(":8000"))
 }

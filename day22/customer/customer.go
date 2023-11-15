@@ -2,6 +2,7 @@ package customer
 
 import (
 	"day-22/model"
+	"errors"
 	"fmt"
 	"net/http"
 
@@ -36,35 +37,53 @@ func (cs *CustomerSystem) CreateCustomer(c echo.Context) error {
 	return c.JSON(http.StatusOK, newCustomer)
 }
 
-func (cs *CustomerSystem) ReadCustomer() ([]model.Customer, bool) {
+func (cs *CustomerSystem) ReadCustomer(c echo.Context) error {
 	var customerList []model.Customer
 
 	qry := cs.DB.Find(&customerList)
 	err := qry.Error
 
 	if err != nil {
-		fmt.Println("Error read data table:", err.Error())
-		return nil, false
+		c.Echo().Logger.Error("Database error:", err.Error())
+		return c.JSON(http.StatusNotFound, map[string]interface{}{
+			"message": "Data tidak ditemukan",
+			"data":    nil,
+		})
 	}
 
-	return customerList, true
+	return c.JSON(http.StatusOK, customerList)
 }
 
-func (cs *CustomerSystem) DeleteCustomer(customerID string) bool {
+func (cs *CustomerSystem) DeleteCustomer(c echo.Context) error {
+	customerID := c.Param("hp")
+
 	var customer model.Customer
 
 	qry := cs.DB.Where("hp = ?", customerID).First(&customer)
 	if qry.Error != nil {
-		fmt.Println("Customer tidak ditemukan")
-		return false
+		if errors.Is(qry.Error, gorm.ErrRecordNotFound) {
+			return c.JSON(http.StatusNotFound, map[string]interface{}{
+				"message": "Data tidak ditemukan",
+				"data":    nil,
+			})
+		}
+		c.Echo().Logger.Error("Database error:", qry.Error.Error())
+		return c.JSON(http.StatusInternalServerError, map[string]interface{}{
+			"message": "Terjadi kesalahan pada pengolahan data",
+			"data":    nil,
+		})
 	}
 
-	if err := cs.DB.Delete(&customer).Error; err != nil {
-		fmt.Println("Gagal menghapus Customer: ", err.Error())
-		return false
+	err := cs.DB.Delete(&customer).Error
+	if err != nil {
+		c.Echo().Logger.Error("Database error:", err.Error())
+		return c.JSON(http.StatusInternalServerError, map[string]interface{}{
+			"message": "Terjadi kesalahan pada penghapusan data",
+			"data":    nil,
+		})
 	}
 
-	return true
+	return c.NoContent(http.StatusNoContent)
 }
 
 func (cs *CustomerSystem) UpdateCustomer(hp string, customerUpdate model.Customer) bool {
