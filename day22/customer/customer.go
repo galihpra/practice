@@ -3,7 +3,6 @@ package customer
 import (
 	"day-22/model"
 	"errors"
-	"fmt"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
@@ -86,20 +85,47 @@ func (cs *CustomerSystem) DeleteCustomer(c echo.Context) error {
 	return c.NoContent(http.StatusNoContent)
 }
 
-func (cs *CustomerSystem) UpdateCustomer(hp string, customerUpdate model.Customer) bool {
+func (cs *CustomerSystem) UpdateCustomer(c echo.Context) error {
+	customerID := c.Param("hp")
+
 	var customer model.Customer
-	qry := cs.DB.Where("hp = ?", hp).First(&customer)
+
+	qry := cs.DB.Where("hp = ?", customerID).First(&customer)
 	if qry.Error != nil {
-		fmt.Println("Customer tidak ditemukan")
-		return false
+		if errors.Is(qry.Error, gorm.ErrRecordNotFound) {
+			return c.JSON(http.StatusNotFound, map[string]interface{}{
+				"message": "Data tidak ditemukan",
+				"data":    nil,
+			})
+		}
+		c.Echo().Logger.Error("Database error:", qry.Error.Error())
+		return c.JSON(http.StatusInternalServerError, map[string]interface{}{
+			"message": "Terjadi kesalahan pada pengolahan data",
+			"data":    nil,
+		})
 	}
 
-	customer.Nama = customerUpdate.Nama
+	var updateCustomer model.Customer
 
-	if err := cs.DB.Model(&customer).Updates(&customer).Error; err != nil {
-		fmt.Println("Gagal mengupdate customer: ", err.Error())
-		return false
+	if err := c.Bind(&updateCustomer); err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]interface{}{
+			"message": "Invalid request payload",
+			"data":    nil,
+		})
 	}
 
-	return true
+	err := cs.DB.Model(&customer).Updates(&updateCustomer).Error
+
+	if err != nil {
+		c.Echo().Logger.Error("Database error:", err.Error())
+		return c.JSON(http.StatusInternalServerError, map[string]interface{}{
+			"message": "Internal Server Error",
+			"data":    nil,
+		})
+	}
+
+	return c.JSON(http.StatusOK, map[string]interface{}{
+		"message": "Customer updated successfully",
+		"data":    &customer,
+	})
 }
