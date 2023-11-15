@@ -4,7 +4,9 @@ import (
 	"day-22/auth"
 	"day-22/config"
 	"day-22/customer"
+	detailpembelian "day-22/detail_pembelian"
 	"day-22/model"
+	"day-22/pembelian"
 	"day-22/products"
 	"day-22/users"
 	"fmt"
@@ -24,11 +26,15 @@ func main() {
 	db.AutoMigrate(&model.Customer{})
 	db.AutoMigrate(&model.User{})
 	db.AutoMigrate(&model.Product{})
+	db.AutoMigrate(&model.Pembelian{})
+	db.AutoMigrate(&model.DetailPembelian{})
 
 	var auth = auth.AuthSystem{DB: db}
 	var cust = customer.CustomerSystem{DB: db}
 	var user = users.UserSystem{DB: db}
 	var product = products.ProductSystem{DB: db}
+	var pembelian = pembelian.PembelianSystem{DB: db}
+	var detail = detailpembelian.DetailPembelianSystem{DB: db}
 
 	e := echo.New()
 
@@ -58,6 +64,20 @@ func main() {
 	e.GET("/products/:barcode", product.ReadProductById)
 	e.DELETE("/products/:barcode", product.DeleteProduct)
 	e.PUT("/products/:barcode", product.UpdateProduct)
+
+	// Pembelian
+	e.POST("/transactions", pembelian.CreatePembelian)
+	e.GET("/transactions", pembelian.ReadPembelian)
+	e.GET("/transactions/:no_invoice", pembelian.ReadPembelianById)
+	e.DELETE("/transactions/:no_invoice", pembelian.DeletePembelian)
+	e.PUT("/transactions/:no_invoice", pembelian.UpdatePembelian)
+
+	// Detail Pembelian
+	e.POST("/detail_transactions", detail.CreateDetailPembelian)
+	e.GET("/detail_transactions", detail.ReadDetailPembelian)
+	e.GET("/detail_transactions/:pembelian_id", detail.ReadDetailPembelianById)
+	e.DELETE("/detail_transactions/:pembelian_id", detail.DeleteDetailPembelian)
+	e.PUT("/detail_transactions/:pembelian_id", detail.UpdateDetailPembelian)
 
 	e.Logger.Fatal(e.Start(":8000"))
 }
