@@ -29,9 +29,9 @@ func routeUser(e *echo.Echo, uc user.UserController) {
 }
 
 func routeCustomer(e *echo.Echo, cc customer.CustomerController) {
-	// e.GET("/customers", cc.GetListCustomers(), echojwt.JWT([]byte("$!1gnK3yyy!!!")))
-	// e.GET("/customers/:id", cc.GetCustomer(), echojwt.JWT([]byte("$!1gnK3yyy!!!")))
+	e.GET("/customers", cc.GetListCustomer(), echojwt.JWT([]byte("$!1gnK3yyy!!!")))
+	e.GET("/customers/:hp", cc.GetCustomer(), echojwt.JWT([]byte("$!1gnK3yyy!!!")))
 	e.POST("/customers", cc.Create(), echojwt.JWT([]byte("$!1gnK3yyy!!!")))
-	// e.PUT("/customers/:id", cc.UpdateCustomer(), echojwt.JWT([]byte("$!1gnK3yyy!!!")))
-	// e.DELETE("/customers/:id", cc.DeleteCustomer(), echojwt.JWT([]byte("$!1gnK3yyy!!!")))
+	e.PUT("/customers/:hp", cc.UpdateCustomer(), echojwt.JWT([]byte("$!1gnK3yyy!!!")))
+	e.DELETE("/customers/:hp", cc.DeleteCustomer(), echojwt.JWT([]byte("$!1gnK3yyy!!!")))
 }
