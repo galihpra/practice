@@ -28,7 +28,7 @@ func main() {
 		return
 	}
 
-	db.AutoMigrate(model.UserModel{}, &model.ProductModel{}, &model.CustomerModel{}, &model.PembelianModel{})
+	db.AutoMigrate(model.UserModel{}, &model.ProductModel{}, &model.CustomerModel{}, &model.PembelianModel{}, &model.DetailPembelianModel{})
 
 	modelUser := model.UserQuery{DB: db}
 	userController := user.UserController{Model: modelUser}

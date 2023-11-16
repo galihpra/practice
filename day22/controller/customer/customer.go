@@ -161,7 +161,7 @@ func (cc *CustomerController) UpdateCustomer() echo.HandlerFunc {
 
 		var response = new(CreateResponse)
 		response.Nama = result.Nama
-		response.Hp = result.Hp
+		response.Hp = hp
 
 		return c.JSON(http.StatusOK, map[string]any{
 			"message": "success update customer data",
