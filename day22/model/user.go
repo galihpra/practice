@@ -56,3 +56,21 @@ func (uq *UserQuery) GetUserByUsername(username string) (UserModel, error) {
 
 	return user, nil
 }
+
+func (uq *UserQuery) UpdateUser(username string, updatedData UserModel) (UserModel, error) {
+	var user UserModel
+	if err := uq.DB.Model(&user).Where("username = ?", username).Updates(updatedData).Error; err != nil {
+		return UserModel{}, err
+	}
+
+	return user, nil
+}
+
+func (uq *UserQuery) DeleteUser(username string) error {
+	var user UserModel
+	if err := uq.DB.Model(&user).Where("username = ?", username).Delete(&user).Error; err != nil {
+		return err
+	}
+
+	return nil
+}

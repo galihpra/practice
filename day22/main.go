@@ -2,6 +2,7 @@ package main
 
 import (
 	"day-22/config"
+	"day-22/controller/customer"
 	"day-22/controller/user"
 	"day-22/model"
 	"day-22/routes"
@@ -27,12 +28,15 @@ func main() {
 		return
 	}
 
-	db.AutoMigrate(model.UserModel{}, &model.ProductModel{})
+	db.AutoMigrate(model.UserModel{}, &model.ProductModel{}, &model.CustomerModel{}, &model.PembelianModel{})
 
-	model := model.UserQuery{DB: db}
-	userController := user.UserController{Model: model}
+	modelUser := model.UserQuery{DB: db}
+	userController := user.UserController{Model: modelUser}
 
-	routes.InitRoute(e, userController)
+	modelCustomer := model.CustomerQuery{DB: db}
+	customerController := customer.CustomerController{Model: modelCustomer}
+
+	routes.InitRoute(e, userController, customerController)
 
 	e.Logger.Fatal(e.Start(":8000"))
 }

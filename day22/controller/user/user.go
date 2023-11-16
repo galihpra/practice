@@ -181,3 +181,78 @@ func (uc *UserController) GetUser() echo.HandlerFunc {
 		})
 	}
 }
+
+func (uc *UserController) UpdateUser() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		username := c.Param("username")
+
+		var updatedData = new(UpdateRequest)
+		if err := c.Bind(updatedData); err != nil {
+			return c.JSON(http.StatusBadRequest, map[string]any{
+				"message": "input yang diberikan tidak sesuai",
+			})
+		}
+
+		validate := validator.New(validator.WithRequiredStructEnabled())
+
+		if err := validate.Struct(updatedData); err != nil {
+			c.Echo().Logger.Error("Input error :", err.Error())
+			return c.JSON(http.StatusBadRequest, map[string]any{
+				"message": err.Error(),
+				"data":    nil,
+			})
+		}
+
+		var updatedDataProcess = new(model.UserModel)
+		updatedDataProcess.Status = updatedData.Status
+		updatedDataProcess.Nama = updatedData.Nama
+		updatedDataProcess.Password = updatedData.Password
+
+		result, err := uc.Model.UpdateUser(username, *updatedDataProcess)
+		if err != nil {
+			c.Logger().Error("ERROR Update Data User, explain:", err.Error())
+			if strings.Contains(err.Error(), "not found") {
+				return c.JSON(http.StatusBadRequest, map[string]any{
+					"message": "data yang diinputkan tidak ditemukan",
+				})
+			}
+			return c.JSON(http.StatusInternalServerError, map[string]any{
+				"message": "terjadi permasalahan ketika memproses data",
+			})
+		}
+
+		var response = new(UserListResponse)
+		response.Nama = result.Nama
+		response.Username = username
+		response.Password = result.Password
+		response.Status = result.Status
+
+		return c.JSON(http.StatusOK, map[string]any{
+			"message": "success update user data",
+			"data":    response,
+		})
+	}
+}
+
+func (uc *UserController) DeleteUser() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		username := c.Param("username")
+
+		err := uc.Model.DeleteUser(username)
+		if err != nil {
+			c.Logger().Error("ERROR Delete Data User, explain:", err.Error())
+			if strings.Contains(err.Error(), "not found") {
+				return c.JSON(http.StatusBadRequest, map[string]any{
+					"message": "data yang diinputkan tidak ditemukan",
+				})
+			}
+			return c.JSON(http.StatusInternalServerError, map[string]any{
+				"message": "terjadi permasalahan ketika menghapus data",
+			})
+		}
+
+		return c.JSON(http.StatusOK, map[string]any{
+			"message": "success delete user data",
+		})
+	}
+}

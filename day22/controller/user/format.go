@@ -28,3 +28,9 @@ type UserListResponse struct {
 	Password string `json:"password"`
 	Status   int    `json:"status"`
 }
+
+type UpdateRequest struct {
+	Nama     string `json:"nama"`
+	Password string `json:"password"`
+	Status   int    `json:"status"`
+}
