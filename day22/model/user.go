@@ -47,3 +47,12 @@ func (uq *UserQuery) ListUser() ([]UserModel, error) {
 
 	return users, nil
 }
+
+func (uq *UserQuery) GetUserByUsername(username string) (UserModel, error) {
+	var user UserModel
+	if err := uq.DB.Where("username = ?", username).First(&user).Error; err != nil {
+		return UserModel{}, err
+	}
+
+	return user, nil
+}

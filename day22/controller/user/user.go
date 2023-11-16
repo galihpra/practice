@@ -151,3 +151,33 @@ func (uc *UserController) GetListUser() echo.HandlerFunc {
 	}
 
 }
+
+func (uc *UserController) GetUser() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		username := c.Param("username")
+
+		result, err := uc.Model.GetUserByUsername(username)
+		if err != nil {
+			c.Logger().Error("ERROR Get Data User, explain:", err.Error())
+			if strings.Contains(err.Error(), "not found") {
+				return c.JSON(http.StatusBadRequest, map[string]any{
+					"message": "data yang diinputkan tidak ditemukan",
+				})
+			}
+			return c.JSON(http.StatusInternalServerError, map[string]any{
+				"message": "terjadi permasalahan ketika memproses data",
+			})
+		}
+
+		var response = new(UserListResponse)
+		response.Nama = result.Nama
+		response.Username = result.Username
+		response.Password = result.Password
+		response.Status = result.Status
+
+		return c.JSON(http.StatusOK, map[string]any{
+			"message": "success get data user",
+			"data":    response,
+		})
+	}
+}

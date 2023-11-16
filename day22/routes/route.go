@@ -21,4 +21,5 @@ func routeUser(e *echo.Echo, uc user.UserController) {
 	e.POST("/login", uc.Login())
 	e.POST("/users", uc.Register())
 	e.GET("/users", uc.GetListUser(), echojwt.JWT([]byte("$!1gnK3yyy!!!")))
+	e.GET("/users/:username", uc.GetUser(), echojwt.JWT([]byte("$!1gnK3yyy!!!")))
 }
