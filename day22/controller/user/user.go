@@ -120,6 +120,34 @@ func (uc *UserController) Login() echo.HandlerFunc {
 
 func (uc *UserController) GetListUser() echo.HandlerFunc {
 	return func(c echo.Context) error {
-		return c.JSON(http.StatusOK, "return data")
+		result, err := uc.Model.ListUser()
+		if err != nil {
+			c.Logger().Error("ERROR Get Data User, explain:", err.Error())
+			if strings.Contains(err.Error(), "not found") {
+				return c.JSON(http.StatusBadRequest, map[string]any{
+					"message": "data yang diinputkan tidak ditemukan",
+				})
+			}
+			return c.JSON(http.StatusInternalServerError, map[string]any{
+				"message": "terjadi permasalahan ketika memproses data",
+			})
+		}
+
+		var response []UserListResponse
+		for _, user := range result {
+			userResponse := UserListResponse{
+				Nama:     user.Nama,
+				Username: user.Username,
+				Password: user.Password,
+				Status:   user.Status,
+			}
+			response = append(response, userResponse)
+		}
+
+		return c.JSON(http.StatusOK, map[string]any{
+			"message": "success get list user",
+			"data":    response,
+		})
 	}
+
 }

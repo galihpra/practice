@@ -21,3 +21,10 @@ type LoginResponse struct {
 	Nama     string `json:"nama"`
 	Token    string `json:"token"`
 }
+
+type UserListResponse struct {
+	Username string `json:"username"`
+	Nama     string `json:"nama"`
+	Password string `json:"password"`
+	Status   int    `json:"status"`
+}
