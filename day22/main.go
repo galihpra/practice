@@ -3,6 +3,7 @@ package main
 import (
 	"day-22/config"
 	"day-22/controller/customer"
+	"day-22/controller/product"
 	"day-22/controller/user"
 	"day-22/model"
 	"day-22/routes"
@@ -36,7 +37,10 @@ func main() {
 	modelCustomer := model.CustomerQuery{DB: db}
 	customerController := customer.CustomerController{Model: modelCustomer}
 
-	routes.InitRoute(e, userController, customerController)
+	modelProduct := model.ProductQuery{DB: db}
+	productController := product.ProductController{Model: modelProduct}
+
+	routes.InitRoute(e, userController, customerController, productController)
 
 	e.Logger.Fatal(e.Start(":8000"))
 }

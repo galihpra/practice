@@ -2,6 +2,7 @@ package routes
 
 import (
 	"day-22/controller/customer"
+	"day-22/controller/product"
 	"day-22/controller/user"
 
 	echojwt "github.com/labstack/echo-jwt/v4"
@@ -9,7 +10,7 @@ import (
 	"github.com/labstack/echo/v4/middleware"
 )
 
-func InitRoute(e *echo.Echo, uc user.UserController, cc customer.CustomerController) {
+func InitRoute(e *echo.Echo, uc user.UserController, cc customer.CustomerController, pc product.ProductController) {
 	e.Pre(middleware.RemoveTrailingSlash())
 
 	e.Use(middleware.CORS())
@@ -17,6 +18,7 @@ func InitRoute(e *echo.Echo, uc user.UserController, cc customer.CustomerControl
 
 	routeUser(e, uc)
 	routeCustomer(e, cc)
+	routeProduct(e, pc)
 }
 
 func routeUser(e *echo.Echo, uc user.UserController) {
@@ -34,4 +36,12 @@ func routeCustomer(e *echo.Echo, cc customer.CustomerController) {
 	e.POST("/customers", cc.Create(), echojwt.JWT([]byte("$!1gnK3yyy!!!")))
 	e.PUT("/customers/:hp", cc.UpdateCustomer(), echojwt.JWT([]byte("$!1gnK3yyy!!!")))
 	e.DELETE("/customers/:hp", cc.DeleteCustomer(), echojwt.JWT([]byte("$!1gnK3yyy!!!")))
+}
+
+func routeProduct(e *echo.Echo, pc product.ProductController) {
+	e.GET("/products", pc.GetListProduct(), echojwt.JWT([]byte("$!1gnK3yyy!!!")))
+	e.GET("/products/:barcode", pc.GetProductByBarcode(), echojwt.JWT([]byte("$!1gnK3yyy!!!")))
+	e.POST("/products", pc.CreateProduct(), echojwt.JWT([]byte("$!1gnK3yyy!!!")))
+	e.PUT("/products/:barcode", pc.UpdateProduct(), echojwt.JWT([]byte("$!1gnK3yyy!!!")))
+	e.DELETE("/products/:barcode", pc.DeleteProduct(), echojwt.JWT([]byte("$!1gnK3yyy!!!")))
 }
