@@ -16,7 +16,7 @@ type ProductModel struct {
 	UpdatedAt        time.Time
 	DeletedAt        gorm.DeletedAt         `gorm:"index"`
 	UserNama         string                 `gorm:"column:user_nama"`
-	DetailPembelians []DetailPembelianModel `gorm:"foreignKey:PembelianID"`
+	DetailPembelians []DetailPembelianModel `gorm:"foreignKey:ProductID"`
 }
 
 type ProductQuery struct {

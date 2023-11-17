@@ -1,7 +1,9 @@
 package pembelian
 
 type CreateRequest struct {
-	CustomerID string `json:"hp" form:"hp" validate:"required"`
+	No_invoice string `json:"no_invoice" form:"no_invoice" validate:"required"`
+	CustomerID string `json:"customer_id" form:"customer_id" validate:"required"`
+	UserID     string `json:"user_id" form:"user_id" validate:"required"`
 }
 
 type ListResponse struct {

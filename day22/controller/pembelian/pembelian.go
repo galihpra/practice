@@ -34,7 +34,9 @@ func (pbc *PembelianController) Create() echo.HandlerFunc {
 		}
 
 		var inputProcess = new(model.PembelianModel)
+		inputProcess.No_invoice = input.No_invoice
 		inputProcess.CustomerID = input.CustomerID
+		inputProcess.UserID = input.UserID
 
 		_, err := pbc.Model.AddPembelian(*inputProcess)
 

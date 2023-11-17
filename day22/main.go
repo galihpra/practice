@@ -3,6 +3,8 @@ package main
 import (
 	"day-22/config"
 	"day-22/controller/customer"
+	detailpembelian "day-22/controller/detail_pembelian"
+	"day-22/controller/pembelian"
 	"day-22/controller/product"
 	"day-22/controller/user"
 	"day-22/model"
@@ -40,7 +42,13 @@ func main() {
 	modelProduct := model.ProductQuery{DB: db}
 	productController := product.ProductController{Model: modelProduct}
 
-	routes.InitRoute(e, userController, customerController, productController)
+	modelPembelian := model.PembelianQuery{DB: db}
+	pembelianController := pembelian.PembelianController{Model: modelPembelian}
+
+	modelDetailPembelian := model.DetailPembelianQuery{DB: db}
+	detailPembelianController := detailpembelian.DetailPembelianController{Model: modelDetailPembelian}
+
+	routes.InitRoute(e, userController, customerController, productController, pembelianController, detailPembelianController)
 
 	e.Logger.Fatal(e.Start(":8000"))
 }
