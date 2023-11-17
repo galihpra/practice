@@ -86,11 +86,11 @@ func (pc *ProductController) GetListProduct() echo.HandlerFunc {
 		var response []ListResponse
 		for _, product := range result {
 			productResponse := ListResponse{
-				Barcode: product.Barcode,
-				Nama:    product.Nama,
-				Stok:    product.Stok,
-				Harga:   product.Harga,
-				UserID:  product.UserID,
+				Barcode:  product.Barcode,
+				Nama:     product.Nama,
+				Stok:     product.Stok,
+				Harga:    product.Harga,
+				UserNama: product.UserNama,
 			}
 			response = append(response, productResponse)
 		}
@@ -125,7 +125,7 @@ func (pc *ProductController) GetProductByBarcode() echo.HandlerFunc {
 		response.Nama = result.Nama
 		response.Stok = result.Stok
 		response.Harga = result.Harga
-		response.UserID = result.UserID
+		response.UserNama = result.UserNama
 
 		return c.JSON(http.StatusOK, map[string]any{
 			"message": "success get data product",
@@ -179,7 +179,7 @@ func (pc *ProductController) UpdateProduct() echo.HandlerFunc {
 		response.Nama = result.Nama
 		response.Stok = result.Stok
 		response.Harga = result.Harga
-		response.UserID = result.UserID
+		response.UserNama = result.UserNama
 
 		return c.JSON(http.StatusOK, map[string]any{
 			"message": "success update product data",

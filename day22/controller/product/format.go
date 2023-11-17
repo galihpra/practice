@@ -17,11 +17,11 @@ type CreateResponse struct {
 }
 
 type ListResponse struct {
-	Barcode string `json:"barcode"`
-	Nama    string `json:"nama"`
-	Harga   int    `json:"harga"`
-	Stok    int    `json:"stok"`
-	UserID  string `json:"user_id"`
+	Barcode  string `json:"barcode"`
+	Nama     string `json:"nama"`
+	Harga    int    `json:"harga"`
+	Stok     int    `json:"stok"`
+	UserNama string `json:"nama_user"`
 }
 
 type UpdateRequest struct {
