@@ -5,6 +5,7 @@ import (
 	"context"
 	"log"
 	"net/http"
+	"strconv"
 	"strings"
 
 	"github.com/cloudinary/cloudinary-go"
@@ -130,10 +131,20 @@ func (cc *CouponHandler) ReadByUser() echo.HandlerFunc {
 
 func (cc *CouponHandler) Read() echo.HandlerFunc {
 	return func(c echo.Context) error {
-		result, err := cc.s.GetKupon()
+		page, err := strconv.Atoi(c.QueryParam("page"))
+		if err != nil || page < 1 {
+			page = 1
+		}
+
+		pageSize, err := strconv.Atoi(c.QueryParam("page_size"))
+		if err != nil || pageSize < 1 {
+			pageSize = 10
+		}
+
+		result, pagination, err := cc.s.GetKupon(int64(page), int64(pageSize))
 
 		if err != nil {
-			c.Logger().Error("ERROR Register, explain:", err.Error())
+			c.Logger().Error("ERROR Get Data, explain:", err.Error())
 			return c.JSON(http.StatusInternalServerError, map[string]any{
 				"message": "terjadi permasalahan ketika memproses data",
 			})
@@ -153,8 +164,9 @@ func (cc *CouponHandler) Read() echo.HandlerFunc {
 		}
 
 		return c.JSON(http.StatusOK, map[string]any{
-			"message": "success read data",
-			"data":    response,
+			"message":    "success read data",
+			"data":       response,
+			"pagination": pagination,
 		})
 	}
 }

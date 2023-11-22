@@ -2,6 +2,7 @@ package repository
 
 import (
 	"TugasDay23/features/coupons"
+	"log"
 
 	"gorm.io/gorm"
 )
@@ -64,11 +65,15 @@ func (cq *couponQuery) ReadKuponByUser(userID uint) ([]coupons.Coupon, error) {
 	return result, nil
 }
 
-func (cq *couponQuery) ReadKupon() ([]coupons.Coupon, error) {
+func (cq *couponQuery) ReadKupon(page int64, pageSize int64) ([]coupons.Coupon, coupons.Pagination, error) {
 	var couponModels []CouponModel
 
-	if err := cq.db.Find(&couponModels).Error; err != nil {
-		return nil, err
+	var totalRecords int64
+	cq.db.Model(&CouponModel{}).Count(&totalRecords)
+
+	var offset = (page - 1) * pageSize
+	if err := cq.db.Offset(int(offset)).Limit(int(pageSize)).Find(&couponModels).Error; err != nil {
+		return nil, coupons.Pagination{}, err
 	}
 
 	var result []coupons.Coupon
@@ -83,5 +88,29 @@ func (cq *couponQuery) ReadKupon() ([]coupons.Coupon, error) {
 		})
 	}
 
-	return result, nil
+	var totalPages = (totalRecords + pageSize - 1) / pageSize
+
+	var nextPage *int64
+	if page < totalPages {
+		nextPage = new(int64)
+		*nextPage = page + 1
+		log.Println("Next page:", *nextPage)
+	}
+
+	var prevPage *int64
+	if page > 1 {
+		prevPage = new(int64)
+		*prevPage = page - 1
+		log.Println("Previous page:", *prevPage)
+	}
+
+	var pagination = coupons.Pagination{
+		TotalRecords: totalRecords,
+		CurrentPage:  page,
+		TotalPages:   totalPages,
+		NextPage:     *nextPage,
+		PrevPage:     prevPage,
+	}
+
+	return result, pagination, nil
 }

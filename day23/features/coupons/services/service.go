@@ -52,12 +52,12 @@ func (cs *CouponService) GetKuponByUser(token *golangjwt.Token) ([]coupons.Coupo
 	return result, nil
 }
 
-func (cs *CouponService) GetKupon() ([]coupons.Coupon, error) {
-	result, err := cs.m.ReadKupon()
+func (cs *CouponService) GetKupon(page int64, pageSize int64) ([]coupons.Coupon, coupons.Pagination, error) {
+	result, pagination, err := cs.m.ReadKupon(page, pageSize)
 
 	if err != nil {
-		return nil, errors.New("terjadi kesalahan server")
+		return nil, coupons.Pagination{}, errors.New("terjadi kesalahan server")
 	}
 
-	return result, nil
+	return result, pagination, nil
 }
